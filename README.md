@@ -10,7 +10,7 @@ A ideia é criar um único arquivo com a utilização das funções quando neces
 Para o uso do código basta usar o arquivo converte_dbc2dbf.py como exemplo e alterar as funções que achar necessário.
 O criar um novo arquivo com o código abaixo:
 
-```
+```python
 import conversor_dbc
 
 def main():
