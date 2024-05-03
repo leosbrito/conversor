@@ -1,30 +1,15 @@
-import os
-import os.path as path
-import datasus_dbc
+import conversor_dbc
  
-diretorioDBC = "dados/dbc"
-diretorioDBF = "dados/dbf"
- 
-os.makedirs(diretorioDBF, exist_ok=True)  # Cria o diretório DBF caso não exista
+# diretorioDBC = "dados/dbc"
 
-def converter_dbc_para_dbf(arquivo_dbc):
-    try:
-        print("-----------------------------------------------------")
-        dbc_file = os.path.join(diretorioDBC, arquivo_dbc)
-        filename = path.basename(dbc_file).split(".")[0]
-        print(f"Convertendo arquivo {filename}...")
-        dbf_file = f"{diretorioDBF}/{filename}.dbf"
-        datasus_dbc.decompress(dbc_file, dbf_file)
-        print(f"Arquivo DBF criado: {dbf_file}...")
-    except Exception as e:
-        print(f"Erro ao converter o arquivo DBC para DBF")
+def main():
+    # Converte arquivos DBC para arquivos DBF no diretórios estipulados
+    # Caso não exista diretório ou argumento para eles será criado um diretório chamado "dbf" no raiz do arquivo executado
+    # conversor_dbc.converter_dbc2dbf(diretorioDBC = "dados/dbc", diretorioDBF="dados/dbf")
 
-print("#####################################################")
-print("Convertendo arquivo DBC para DBF...")
-for arquivo_dbc in os.listdir(diretorioDBC):
-    if arquivo_dbc.endswith(".dbc"):
-        converter_dbc_para_dbf(arquivo_dbc)
- 
-print("Conversão de DBC para DBF concluída com sucesso!")
-print("####################################################")
- 
+    conversor_dbc.converter_dbf2parquet(arquivoDBF="dados/dbf/RDMG2209.dbf", diretorioParquet="dados/parquet", row_group=5000)
+
+    # conversor_dbc.converter_parquet2csv(ultimo_arquivo_dbf="dados/dbf/RDMG2209.dbf", diretorioParquet="dados/parquet", diretorioCSV="dados/csv")
+
+if __name__ == "__main__":
+    main()
