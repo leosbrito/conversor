@@ -4,7 +4,7 @@ import os.path as path
 import datasus_dbc
 from dbfread import DBF
  
-def converter_dbc2dbf(diretorioDBC, diretorioDBF="dbf", arquivo_dbc=""):
+def converter_dbc2dbf(arquivo_dbc="", diretorioDBC="dbc", diretorioDBF="dbf"):
     try:
         if (diretorioDBC != "" or arquivo_dbc !=""):
             os.makedirs(diretorioDBF, exist_ok=True)  # Cria o diretório DBF caso não exista
@@ -33,54 +33,109 @@ def converter_dbc2dbf(diretorioDBC, diretorioDBF="dbf", arquivo_dbc=""):
     except Exception as e:
         print(f"Erro ao converter o arquivo DBC para DBF")
  
-def arquivoDBF_maisrecente(diretorio):
-    arquivos = os.listdir(diretorio)
-    if arquivos:
-        arquivos_dbf = [arquivo for arquivo in arquivos if arquivo.endswith('.dbf')]
-        if arquivos_dbf:
-            arquivos_dbf.sort(key=lambda x: os.path.getmtime(os.path.join(diretorio, x)), reverse=True)
-            return arquivos_dbf[0]
-    return None
- 
-def converter_dbf2parquet(arquivoDBF, diretorioParquet="parquet", row_group=5000):
+def converter_dbf2parquet(arquivoDBF="", diretorioDBF="dbf", diretorioParquet="parquet", row_group=5000):
     try:
-        print("----------------------------------------------------------")
-        print("Convertendo arquivo DBF para PARQUET...")
-        print(f"Lendo arquivo DBF: {arquivoDBF} ...")
-        dbf_file = DBF(arquivoDBF, encoding="Latin1")
-        print("Criando DataFrame do arquivo DBF... (Pode demorar mais do que o esperado)")
-        df = pl.DataFrame(iter(dbf_file))
-        print("Dividindo o nome do arquivo especificado em 'arquivoDBF' em suas partes componentes e armazenando o nome do arquivo sem a extensão em uma variável chamada 'nmparquet'...")
-        nmparquet = os.path.splitext(os.path.basename(arquivoDBF))[0]
-        nome_parquet = nmparquet + ".parquet"
-        print(f"Criando um caminho completo do parquet de nome: {nome_parquet}...")
-        os.makedirs(diretorioParquet, exist_ok=True)  # Cria o diretório PARQUET caso não exista
-        caminho_parquet = os.path.join(diretorioParquet, nome_parquet)
-        print("Convertendo as colunas para o tipo String (str) ...")
-        df = df.cast(pl.String)
-        print("Gravando o DataFrame em Parquet por bloco...")
-        df.write_parquet(caminho_parquet, row_group_size=row_group)
-        print(f"Arquivo PARQUET criado: {nome_parquet}")
+        if (diretorioDBF != "" or arquivoDBF !=""):
+            print("##########################################################")
+            print("Convertendo arquivo DBF para PARQUET...")
+            if (arquivoDBF != ""):
+                try:
+                    print("----------------------------------------------------------")
+                    print(f"Convertendo arquivo específico {arquivoDBF}...")
+                    print(f"Lendo arquivo DBF: {arquivoDBF} ...")
+                    dbf_file = DBF(arquivoDBF, encoding="Latin1")
+                    print("Criando DataFrame do arquivo DBF... (Pode demorar mais do que o esperado)")
+                    df = pl.DataFrame(iter(dbf_file))
+                    print("Dividindo o nome do arquivo especificado em 'arquivoDBF' em suas partes componentes e armazenando o nome do arquivo sem a extensão em uma variável chamada 'nmparquet'...")
+                    nmparquet = os.path.splitext(os.path.basename(arquivoDBF))[0]
+                    nome_parquet = nmparquet + ".parquet"
+                    print(f"Criando um caminho completo do parquet de nome: {nome_parquet}...")
+                    os.makedirs(diretorioParquet, exist_ok=True)  # Cria o diretório PARQUET caso não exista
+                    caminho_parquet = os.path.join(diretorioParquet, nome_parquet)
+                    print("Convertendo as colunas para o tipo String (str) ...")
+                    df = df.cast(pl.String)
+                    print("Gravando o DataFrame em Parquet por bloco...")
+                    df.write_parquet(caminho_parquet, row_group_size=row_group)
+                    print(f"Arquivo PARQUET criado: {nome_parquet}")
+                except Exception as e:
+                    print(f"Erro ao converter o arquivo ({arquivoDBF})! Erro: {e}")
+            else:
+                print(f"Convertendo arquivos DBF do diretório {diretorioDBF}...")
+                for arquivoDBF in os.listdir(diretorioDBF):
+                    if arquivoDBF.endswith(".dbf"):
+                        try:
+                            print("----------------------------------------------------------")
+                            print(f"Convertendo arquivo DBF: {arquivoDBF} ...")
+                            arquivoDBF = os.path.join(diretorioDBF, arquivoDBF)
+                            filename = path.basename(arquivoDBF).split(".")[0]
+                            dbf_file = f"{diretorioDBF}/{filename}.dbf"
+                            print(f"Lendo arquivo DBF: {dbf_file} ...")
+                            df_file = DBF(dbf_file, encoding="iso-8859-1", ignore_missing_memofile=True) # DBF(dbf_file, encoding="Latin1")
+                            print("Criando DataFrame do arquivo DBF... (Pode demorar mais do que o esperado)")
+                            df = pl.DataFrame(iter(df_file))
+                            print("Dividindo o nome do arquivo especificado em 'arquivoDBF' em suas partes componentes e armazenando o nome do arquivo sem a extensão em uma variável chamada 'nmparquet'...")
+                            nmparquet = os.path.splitext(os.path.basename(arquivoDBF))[0]
+                            nome_parquet = nmparquet + ".parquet"
+                            print(f"Criando um caminho completo do parquet de nome: {nome_parquet}...")
+                            os.makedirs(diretorioParquet, exist_ok=True)  # Cria o diretório PARQUET caso não exista
+                            caminho_parquet = os.path.join(diretorioParquet, nome_parquet)
+                            print("Convertendo as colunas para o tipo String (str) ...")
+                            df = df.cast(pl.String)
+                            print("Gravando o DataFrame em Parquet por bloco...")
+                            df.write_parquet(caminho_parquet, row_group_size=row_group)
+                            print(f"Arquivo PARQUET criado: {nome_parquet}")
+                        except Exception as e:
+                            print(f"Erro ao converter o arquivo ({dbf_file})! Erro: {e}")
+        else:
+            print("O diretório ou o arquivo PARQUET deve ser passado no argumento da função converter_dbf2parquet()!")
     except Exception as e:
         print(f"Erro ao converter o arquivo DBF {arquivoDBF} para Parquet: {e}")
 
-def converter_parquet2csv(ultimo_arquivo_dbf, diretorioParquet="parquet", diretorioCSV="csv"):
+def converter_parquet2csv(arquivoParquet="", diretorioParquet="parquet", diretorioCSV="csv"):
     try:
-        print("----------------------------------------------------------")
-        print("Convertendo arquivo PARQUET para CSV...")
-        print("Montando caminho do arquivo PARQUET...")
-        nmparquet = os.path.splitext(os.path.basename(ultimo_arquivo_dbf))[0]
-        nome_parquet = nmparquet + ".parquet"
-        arquivoparquet = os.path.join(diretorioParquet, nome_parquet)
-        print(f"Lendo arquivo PARQUET para criar arquivo CSV: {arquivoparquet} ...")
-        df = pl.read_parquet(arquivoparquet)
-        print("Montando caminho do arquivo CSV...")
-        nmcsv = os.path.splitext(os.path.basename(ultimo_arquivo_dbf))[0]
-        nome_csv = nmcsv + ".csv"
-        print(f"Criando um caminho completo do CSV de nome: {nome_csv}...")
-        os.makedirs(diretorioCSV, exist_ok=True)  # Cria o diretório CSV caso não exista
-        caminho_CSV = os.path.join(diretorioCSV, nome_csv)
-        df.write_csv(caminho_CSV)
-        print(f"Arquivo CSV criado: '{caminho_CSV}'")
+        if (diretorioParquet != "" or arquivoParquet !=""):
+            print("##########################################################")
+            print("Convertendo arquivo PARQUET para CSV...")
+            if (arquivoParquet != ""):
+                try:
+                    print("----------------------------------------------------------")
+                    print("Montando caminho do arquivo PARQUET...")
+                    nmparquet = os.path.splitext(os.path.basename(arquivoParquet))[0]
+                    nome_parquet = nmparquet + ".parquet"
+                    file_parquet = os.path.join(diretorioParquet, nome_parquet)
+                    print(f"Lendo arquivo PARQUET para criar arquivo CSV: {file_parquet} ...")
+                    df = pl.read_parquet(file_parquet)
+                    print("Montando caminho do arquivo CSV...")
+                    nmcsv = os.path.splitext(os.path.basename(arquivoParquet))[0]
+                    nome_csv = nmcsv + ".csv"
+                    print(f"Criando um caminho completo do CSV de nome: {nome_csv}...")
+                    os.makedirs(diretorioCSV, exist_ok=True)  # Cria o diretório CSV caso não exista
+                    caminho_CSV = os.path.join(diretorioCSV, nome_csv)
+                    df.write_csv(caminho_CSV)
+                    print(f"Arquivo CSV criado: '{caminho_CSV}'")
+                except Exception as e:
+                    print(f"Erro ao converter o arquivo {arquivoParquet}")
+            else:
+                print(f"Convertendo arquivos PARQUET do diretório {diretorioParquet}...")
+                for arqParquet in os.listdir(diretorioParquet):
+                    if arqParquet.endswith(".parquet"):
+                        try:
+                            print("----------------------------------------------------------")
+                            print(f"Convertendo arquivo PARQUET: {arqParquet} ...")
+                            nmparquet = os.path.splitext(os.path.basename(arqParquet))[0]
+                            nome_parquet = nmparquet + ".parquet"
+                            file_parquet = os.path.join(diretorioParquet, nome_parquet)
+                            print(f"Lendo arquivo PARQUET para criar arquivo CSV: {file_parquet} ...")
+                            df = pl.read_parquet(file_parquet)
+                            print("Montando caminho do arquivo CSV...")
+                            nmcsv = os.path.splitext(os.path.basename(arqParquet))[0]
+                            nome_csv = nmcsv + ".csv"
+                            print(f"Criando um caminho completo do CSV de nome: {nome_csv}...")
+                            os.makedirs(diretorioCSV, exist_ok=True)  # Cria o diretório CSV caso não exista
+                            caminho_CSV = os.path.join(diretorioCSV, nome_csv)
+                            df.write_csv(caminho_CSV)
+                            print(f"Arquivo CSV criado: '{caminho_CSV}'")
+                        except Exception as e:
+                            print(f"Erro ao converter o arquivo {arqParquet}")
     except Exception as e:
-        print(f"Erro ao converter o arquivo PARQUET '{arquivoparquet}' para CSV! {e}")
+        print(f"Erro ao converter o arquivo PARQUET para CSV! {e}")
