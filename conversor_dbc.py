@@ -78,6 +78,7 @@ def converter_parquet2csv(ultimo_arquivo_dbf, diretorioParquet="parquet", direto
         nmcsv = os.path.splitext(os.path.basename(ultimo_arquivo_dbf))[0]
         nome_csv = nmcsv + ".csv"
         print(f"Criando um caminho completo do CSV de nome: {nome_csv}...")
+        os.makedirs(diretorioCSV, exist_ok=True)  # Cria o diretório CSV caso não exista
         caminho_CSV = os.path.join(diretorioCSV, nome_csv)
         df.write_csv(caminho_CSV)
         print(f"Arquivo CSV criado: '{caminho_CSV}'")
