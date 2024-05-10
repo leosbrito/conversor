@@ -1,9 +1,25 @@
 # Converte arquivos DBC para DBF, PARQUET e CSV usando Python
 
-O projeto converte arquivos DBC em diversos formatos como DBF, PARQUET e CSV. Em breve irei incluir outros formatos.
-Este projeto se fez necessário para suprir a necessidade de ler e disponibilizar dados do TABNET e TABWIN do DATASUS (Departamento de Informática do Sistema Único de Saúde).
+O projeto converte arquivos DBC em diversos formatos como DBF, PARQUET e CSV.
+Este projeto se fez necessário para suprir a necessidade de ler dados do TABNET e TABWIN do DATASUS (Departamento de Informática do Sistema Único de Saúde).
 Utiliza a biblioteca datasus-dbc-py criada pelo [Murilo Matsubara](https://github.com/mymatsubara/datasus-dbc-py).
-A ideia é criar um único arquivo com a utilização das funções quando necessário.
+
+# Alteração necessária na biblioteca DBFRED:
+
+A alteração se fez necessária para ler arquivos iniciados com ST dos dados do SCNES.
+1. Abrir arquivo dbf.py
+2. Incluir a seguinte linha dentro da função _read_field_headers():
+```python
+    def _read_field_headers(self, infile):
+        ...
+            if sep in (b'\r', b'\n', b''):
+                # End of field headers
+                break
+            
+            if sep.hex() == ('00'):
+                break 
+        ...
+```
 
 # Uso
 
