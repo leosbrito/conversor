@@ -102,9 +102,8 @@ def converter_parquet2csv(arquivoParquet="", diretorioParquet="parquet", diretor
                     print("Montando caminho do arquivo PARQUET...")
                     nmparquet = os.path.splitext(os.path.basename(arquivoParquet))[0]
                     nome_parquet = nmparquet + ".parquet"
-                    file_parquet = os.path.join(diretorioParquet, nome_parquet)
-                    print(f"Lendo arquivo PARQUET para criar arquivo CSV: {file_parquet} ...")
-                    df = pl.read_parquet(file_parquet)
+                    print(f"Lendo arquivo PARQUET para criar arquivo CSV: {arquivoParquet} ...")
+                    df = pl.read_parquet(arquivoParquet)
                     print("Montando caminho do arquivo CSV...")
                     nmcsv = os.path.splitext(os.path.basename(arquivoParquet))[0]
                     nome_csv = nmcsv + ".csv"
@@ -139,3 +138,4 @@ def converter_parquet2csv(arquivoParquet="", diretorioParquet="parquet", diretor
                             print(f"Erro ao converter o arquivo {arqParquet}")
     except Exception as e:
         print(f"Erro ao converter o arquivo PARQUET para CSV! {e}")
+
