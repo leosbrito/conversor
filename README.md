@@ -4,7 +4,7 @@ O projeto converte arquivos DBC em diversos formatos como DBF, PARQUET e CSV.
 Este projeto se fez necessário para suprir a necessidade de ler dados do TABNET e TABWIN do DATASUS (Departamento de Informática do Sistema Único de Saúde).
 Utiliza a biblioteca datasus-dbc-py criada pelo [Murilo Matsubara](https://github.com/mymatsubara/datasus-dbc-py).
 
-# Alteração necessária na biblioteca DBFRED:
+# Alteração necessária na biblioteca DBFREAD:
 
 A alteração se fez necessária para ler arquivos iniciados com ST dos dados do SCNES.
 1. Abrir arquivo dbf.py
