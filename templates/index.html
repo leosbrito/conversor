@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversor de Arquivos DBC</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="{{ url_for('static', filename='transferencia.js') }}"></script>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            
+            <h1 class="title is-1">Conversor de arquivos do Ministério da Saúde</h1><br/>
+
+            <div id="mensagem" class="message is-info">{{ message }}</div>
+            
+            <form action="/convert" method="POST" id="frmConverte" enctype=multipart/form-data>
+                <div class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <h5 class="title is-5">DBC</h5>
+                            <div class="field">
+                                <label for="arquivo_dbc">Converter apenas um arquivo:</label>
+                                <div class="control">
+                                    <div id="file-dbc" class="file">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" id="arquivo_dbc" name="arquivo_dbc" accept=".dbc" multiple />
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                    <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label"> Escolha um arquivo… </span>
+                                            </span>
+                                            <span class="file-name"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="diretorio_dbc">(Diretório DBC: <strong>dados/dbc</strong>):</label>
+                                <div class="control">
+                                    <input type="hidden" class="input" id="diretorio_dbc" name="diretorio_dbc" value="dados/dbc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <h5 class="title is-5">Arquivos DBC ( {% if filesdbcN > 0 %}{{ filesdbcN }} {% else %} 0 {% endif %} )</h5>
+                            <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                                <div class="grid">
+                                    {% for name in filesdbc: %}
+                                    <div class="cell">
+                                        <a href="{{url_for('download')}}?arquivo=dbc/{{ name }}">{{ name }}</a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <!-- <button type="button" class="button is-primary" id="btnlimpardbc" onclick="javascript:limparDBCs()">Limpar DBCs</button> -->
+                            <button type="button" class="button is-primary" id="btnlimpardbc" name="btnlimpardbc">Limpar DBCs</button>
+                            <span id="resultadolimpeza"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <h5 class="title is-5">DBF</h5>
+                            <div class="field">
+                                <label for="arquivo_dbf">Converter apenas um arquivo:</label>
+                                <div class="control">
+                                    <div id="file-dbf" class="file">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" id="arquivo_dbf" name="arquivo_dbf" accept=".dbf" multiple />
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                    <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label"> Escolha um arquivo… </span>
+                                            </span>
+                                            <span class="file-name"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="diretorio_dbf">(Diretório DBF: <strong>dados/dbf</strong>):</label>
+                                <div class="control">
+                                    <input type="hidden" class="input" id="diretorio_dbf" name="diretorio_dbf" value="dados/dbf">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <h5 class="title is-5">Arquivos DBF</h5>
+                            <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                                <div class="grid">
+                                    {% for name in filesdbf: %}
+                                    <div class="cell">
+                                        <a href="{{url_for('download')}}?arquivo=dbf/{{ name }}">{{ name }}</a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <h5 class="title is-5">PARQUET</h5>
+                            <div class="field">
+                                <label for="arquivoParquet">Converter apenas um arquivo:</label>
+                                <div class="control">
+                                    <div id="file-parquet" class="file">
+                                        <label class="file-label">
+                                            <input class="file-input" type="file" id="arquivoParquet" name="arquivoParquet" accept=".parquet" multiple />
+                                            <span class="file-cta">
+                                                <span class="file-icon">
+                                                    <i class="fas fa-upload"></i>
+                                                </span>
+                                                <span class="file-label"> Escolha um arquivo… </span>
+                                            </span>
+                                            <span class="file-name"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="diretorio_parquet">(Diretório Parquet: <strong>dados/parquet</strong>):</label>
+                                <div class="control">
+                                    <input type="hidden" class="input" id="diretorio_parquet" name="diretorio_parquet" value="dados/parquet">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="tamanho_grupo_parquet">Tamanho do grupo Parquet (5000):</label>
+                                <div class="control">
+                                    <input type="hidden" class="input" id="tamanho_grupo_parquet" name="tamanho_grupo_parquet" value="5000">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <h5 class="title is-5">Arquivos PARQUET</h5>
+                            <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                                <div class="grid">
+                                    {% for name in filesparquet: %}
+                                    <div class="cell">
+                                        <a href="{{url_for('download')}}?arquivo=parquet/{{ name }}">{{ name }}</a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box">
+                    <div class="columns">
+                        <div class="column">
+                            <h5 class="title is-5">Converter PARQUET para CSV</h5>
+                            <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                                <label for="diretorio_csv">(Diretório CSV: <strong>dados/csv</strong>):</label>
+                                <div class="control">
+                                    <input type="hidden" class="input" id="diretorio_csv" name="diretorio_csv" value="dados/csv">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <h5 class="title is-5">Arquivos CSV</h5>
+                            <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                                <div class="grid">
+                                    {% for name in filescsv: %}
+                                    <div class="cell">
+                                        <a href="{{url_for('download')}}?arquivo=csv/{{ name }}">{{ name }}</a>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="button is-primary" id="btnConverter">Converter</button>
+                <span id="carregando" style="display: none;">Carregando...</span>
+                <!-- <progress id="carregando" style="display: none;" class="progress is-small is-primary" max="100">15%</progress> -->
+            </form>
+
+            <!-- <hr />
+            
+            <br/>
+            <div class="box">
+                <div class="columns">
+                    <div class="column">
+                        <button type="button" class="button is-primary" id="btnlimpardbc" name="btnlimpardbc">Limpar DBCs</button>
+                        <span id="resultadolimpeza"></span>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column">
+                        <h5 class="title is-5">Arquivos DBC ( {% if filesdbcN > 0 %}{{ filesdbcN }} {% else %} 0 {% endif %} )</h5>
+                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                            <div class="grid">
+                                {% for name in filesdbc: %}
+                                <div class="cell">
+                                    <a href="{{url_for('download')}}?arquivo=dbc/{{ name }}">{{ name }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h5 class="title is-5">Arquivos CSV</h5>
+                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                            <div class="grid">
+                                {% for name in filescsv: %}
+                                <div class="cell">
+                                    <a href="{{url_for('download')}}?arquivo=csv/{{ name }}">{{ name }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h5 class="title is-5">Arquivos PARQUET</h5>
+                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
+                            <div class="grid">
+                                {% for name in filesparquet: %}
+                                <div class="cell">
+                                    <a href="{{url_for('download')}}?arquivo=parquet/{{ name }}">{{ name }}</a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <hr />
+            <div id="messageftp" class="message is-info">{{ messageftp }}</div>
+            <div class="box">
+                <h5 class="title is-5">FTP</h5>
+                <form id="frmCopiarftp" action="/copiarftp" name="frmCopiarftp" method="post">
+                    <div class="field is-horizontal">
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="columns">
+                                    <div class="column is-four-fifths">
+                                        <label for="caminho_ftp">Caminho do FTP: (Após a pasta <strong>/dissemin/publicos/</strong>. Exemplo: SIHSUS/200801_/Dados/ER)</label>
+                                        <div class="control">
+                                            <input class="input" name="caminho_ftp" id="caminho_ftp" type="text" placeholder="Caminho do FTP" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-body">
+                            <div class="field">
+                                <div class="columns">
+                                    <div class="column">
+                                        <label for="diretorio_ftp">Fonte:</label>
+                                        <div class="control">
+                                            <div class="select is-multiple is-small">
+                                                <!-- <select id="mySelect" multiple="multiple" name="mySelect" onchange="carregaModalidade();carregaTipoArquivo();"> -->
+                                                <select multiple size="4" name="diretorio_ftp" id="diretorio_ftp" onchange="carregaModalidade();carregaTipoArquivo();">
+                                                    <option value="DATASUS">Aplicativos - TABWIN/TABNET - Ferramentas para tabulação de dados</option><option value="IBGE">Base Populacional - IBGE</option><option value="Base Territorial">Base Territorial - Mapas e conversões para tabulação</option><option value="CIH">CIH - Sistema de Comunicação de Informação Hospitalar</option><option value="CIHA">CIHA - Sistema de Comunicação de Informação Hospitalar e Ambulatorial</option><option value="CMD">CMD - Conjunto Mínimo de Dados</option><option value="CNES/200508_/Dados">CNES - Cadastro Nacional de Estabelecimentos de Saúde</option><option value="PCE">PCE - Programa de Controle da Esquistossomose</option><option value="PO">PO - Painel de Oncologia – desde 2013</option><option value="RESP">RESP - Notificações de casos suspeitos de SCZ – desde 2015</option><option value="SIASUS">SIASUS - Sistema de Informações Ambulatoriais do SUS</option><option value="SIHSUS">SIHSUS - Sistema de Informações Hospitalares do SUS</option><option value="SIM">SIM - Sistema de informações de Mortalidade</option><option value="SINAN">SINAN - Sistema de Informações de Agravos de Notificação</option><option value="SINASC">SINASC - Sistema de informação de Nascidos Vivos</option><option value="SISCOLO">SISCOLO - Sistema de Informações de Cânceres de Colo de Útero</option><option value="SISMAMA">SISMAMA - Sistema de Informações de Cânceres de Mama</option><option value="SISPRENATAL">SISPRENATAL - Sistema de Monitoramento e Avaliação do Pré-Natal, Parto, Puerpério e Criança</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-body">
+                            <div class="field">
+                                <label for="modSelect">Modalidade:</label>
+                                <div class="control">
+                                    <div class="select is-multiple is-small">
+                                        <select id="modSelect" class="form-control" multiple="multiple" name="modSelect" onchange="carregaTipoArquivo();">
+                                            <!-- <option value="0">Arquivos auxiliares para tabulação</option><option value="1">Dados</option><option value="2">Documentação</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="tp_arquivo">Tipo de Arquivo:</label>
+                                <div class="control">
+                                    <div class="select is-multiple is-small">
+                                        <select id="tp_arquivo" class="form-control" multiple="multiple" name="tp_arquivo" onchange="carregaUF(arquivo);">
+                                            <!-- <option value="DC">DC - Dados Complementares - A partir de Ago/2005</option><option value="EE">EE - Estabelecimento de Ensino - A partir de Mar/2007</option><option value="EF">EF - Estabelecimento Filantrópico - A partir de Mar/2007</option><option value="EP">EP - Equipes - A partir de Abr/2007</option><option value="EQ">EQ - Equipamentos - A partir de Ago/2005</option><option value="GM">GM - Gestão e Metas - A partir de Jun/2007</option><option value="HB">HB - Habilitação - A partir de Mar/2007</option><option value="IN">IN - Incentivos - A partir de Nov/2007</option><option value="LT">LT - Leitos - A partir de Out/2005</option><option value="PF">PF - Profissional - A partir de Ago/2005</option><option value="RC">RC - Regra Contratual - A partir de Mar/2007</option><option value="SR">SR - Serviço Especializado - A partir de Ago/2005</option><option value="ST">ST - Estabelecimentos - A partir de Ago/2005</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-body" id="linha_competencia">
+                            <div class="field">
+                                <label for="nu_ano">Ano:</label>
+                                <div class="control">
+                                    <div class="select is-multiple is-small">
+                                        <select id="nu_ano" class="form-control" multiple="multiple" name="nu_ano">
+                                            <option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option><option value="2007">2007</option><option value="2006">2006</option><option value="2005">2005</option><option value="2004">2004</option><option value="2003">2003</option><option value="2002">2002</option><option value="2001">2001</option><option value="2000">2000</option><option value="1999">1999</option><option value="1998">1998</option><option value="1997">1997</option><option value="1996">1996</option><option value="1995">1995</option><option value="1994">1994</option><option value="1993">1993</option><option value="1992">1992</option><option value="1991">1991</option><option value="1990">1990</option><option value="1989">1989</option><option value="1988">1988</option><option value="1987">1987</option><option value="1986">1986</option><option value="1985">1985</option><option value="1984">1984</option><option value="1983">1983</option><option value="1982">1982</option><option value="1981">1981</option><option value="1980">1980</option><option value="1979">1979</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="nu_mes">Mês:</label>
+                                <div class="control">
+                                    <div class="select is-multiple is-small">
+                                        <select id="nu_mes" class="form-control" multiple="multiple" name="nu_mes">
+                                            <option value="1">Janeiro</option>
+                                            <option value="2">Fevereiro</option>
+                                            <option value="3">Março</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Maio</option>
+                                            <option value="6">Junho</option>
+                                            <option value="7">Julho</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Setembro</option>
+                                            <option value="10">Outubro</option>
+                                            <option value="11">Novembro</option>
+                                            <option value="12">Dezembro</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    <div class="field is-horizontal">
+                        <div class="field-body" id="linha_uf">
+                            <div class="field">
+                                <label for="ds_uf">UF:</label>
+                                <div class="control">
+                                    <div class="select is-multiple is-small">
+                                        <select id="ds_uf" class="form-control" multiple="multiple" name="ds_uf"><option value="AC">AC</option><option value="AL">AL</option><option value="AM">AM</option><option value="AP">AP</option><option value="BA">BA</option><option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option><option value="MG">MG</option><option value="MS">MS</option><option value="MT">MT</option><option value="PA">PA</option><option value="PB">PB</option><option value="PE">PE</option><option value="PI">PI</option><option value="PR">PR</option><option value="RJ">RJ</option><option value="RN">RN</option><option value="RO">RO</option><option value="RR">RR</option><option value="RS">RS</option><option value="SC">SC</option><option value="SE">SE</option><option value="SP">SP</option><option value="TO">TO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                    <div>
+                        <button type="submit" class="button is-primary" id="btnCopiar">Copiar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript">
+        
+        const fileInput = document.querySelector("#file-dbc input[type=file]");
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                const fileName = document.querySelector("#file-dbc .file-name");
+                fileName.textContent = fileInput.files[0].name;
+            }
+        };
+        
+        $(document).ready(function() {
+            $('#btnConverter').click(function() {
+                // Desabilitar o botão converter
+                $('#btnConverter').attr('disabled', true);
+                // Exibir a mensagem "carregando..."
+                $('#carregando').css('display', 'inline');
+                // Enviar formulário"
+                $('#frmConverte').submit();
+            })
+        
+            $("#btnlimpardbc").click(function(){
+                // caminhoftp = $("#caminho_ftp").val();
+                // alert("Limpar DBCs");
+                if (confirm("Limpar DBCs?")) {
+                    $.post( "/limpardbc", function( data ) {
+                        $( "#resultadolimpeza" ).html( data );
+                    });
+                    setTimeout(function() {
+                        window.location.href = "/";
+                    }, 2000);
+                }
+            });
+
+        });
+
+        function apenasNumeros(string) {
+            console.log(string)
+            var numsStr = string.replace(/[^0-9]/g,'');
+            return parseInt(numsStr);
+        }
+        // function limparDBCs(){
+        //     // Desabilitar o botão
+        //     $('#btnlimpardbc').attr('disabled', true);
+        //     alert('apertou o Limpar DBCs');
+
+        //     // jQuery.ajax({
+        //     //     // url: "ftp.php",
+        //     //     url: "/limpardbc",
+        //     //     method: "POST",
+        //     //     data: {
+        //     //         caminho_ftp: $('#caminho_ftp').val()
+        //     //     }
+        //     // });
+        // }
+        
+    </script>
+</body>
+</html>

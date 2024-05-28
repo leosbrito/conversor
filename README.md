@@ -23,7 +23,7 @@ A alteração se fez necessária para ler arquivos iniciados com ST dos dados do
 
 # Uso
 
-Para o uso do código basta usar o arquivo converte_dbc2dbf.py como exemplo e alterar as funções que achar necessário.
+Para o uso do código basta usar o arquivo converter.py como exemplo e alterar as funções que achar necessário.
 O criar um novo arquivo com o código abaixo:
 
 ```python
@@ -32,13 +32,13 @@ import conversor_dbc
 def main():
     # Converte arquivos DBC para arquivos DBF no diretórios estipulados
     # Caso não exista diretório ou argumento para eles será criado um diretório chamado "dbf" no raiz do arquivo executado
-    conversor_dbc.converter_dbc2dbf(arquivoDBF="", diretorioDBC = "dados/dbc", diretorioDBF="dados/dbf")
+    conversor_dbc.converter_dbc2dbf(diretorioDBC="dados/dbc", diretorioDBF="dados/dbf", arquivo_dbc=[])
 
     # Converte arquivo DBF para arquivo PARQUET específico
-    conversor_dbc.converter_dbf2parquet(arquivoDBF="dados/dbf/RDMG2209.dbf", diretorioParquet="dados/parquet", row_group=5000)
+    conversor_dbc.converter_dbf2parquet(diretorioDBF="dados/dbf", diretorioParquet="dados/parquet", row_group=5000, arquivoDBF=[])
     
     # Converte arquivo PARQUET para arquivo CSV específico
-    conversor_dbc.converter_parquet2csv(ultimo_arquivo_dbf="dados/dbf/RDMG2209.dbf", diretorioParquet="dados/parquet", diretorioCSV="dados/csv")
+    conversor_dbc.converter_parquet2csv(diretorioParquet="dados/parquet", diretorioCSV="dados/csv", arquivoParquet=[])
 
 if __name__ == "__main__":
     main()

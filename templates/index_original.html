@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Conversor de Arquivos DBC</title>
+</head>
+<body>
+    <h1>Conversor de Arquivos DBC</h1>
+
+    <form action="/convert" method="POST">
+        <label for="arquivo_dbc">Selecione o arquivo DBC:</label>
+        <input type="file" id="arquivo_dbc" name="arquivo_dbc" accept=".dbc">
+
+        <label for="diretorio_dbc">Diretório DBC (opcional):</label>
+        <input type="text" id="diretorio_dbc" name="diretorio_dbc" value="dados/dbc">
+
+        <label for="diretorio_dbf">Diretório DBF:</label>
+        <input type="text" id="diretorio_dbf" name="diretorio_dbf" value="dados/dbf">
+
+        <label for="diretorio_parquet">Diretório Parquet (opcional):</label>
+        <input type="text" id="diretorio_parquet" name="diretorio_parquet" value="dados/parquet">
+
+        <label for="diretorio_csv">Diretório CSV (opcional):</label>
+        <input type="text" id="diretorio_csv" name="diretorio_csv" value="dados/csv">
+
+        <label for="tamanho_grupo_parquet">Tamanho do grupo Parquet (opcional):</label>
+        <input type="number" id="tamanho_grupo_parquet" name="tamanho_grupo_parquet" value="5000">
+
+        <button type="submit">Converter</button>
+    </form>
+
+    <div id="mensagem"></div>
+
+    <script>
+        const mensagemElement = document.getElementById('mensagem');
+
+        function showMessage(message) {
+            mensagemElement.textContent = message;
+        }
+    </script>
+</body>
+</html>
