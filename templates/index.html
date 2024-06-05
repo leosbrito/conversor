@@ -186,56 +186,6 @@
                 <span id="carregando" style="display: none;">Carregando...</span>
                 <!-- <progress id="carregando" style="display: none;" class="progress is-small is-primary" max="100">15%</progress> -->
             </form>
-
-            <!-- <hr />
-            
-            <br/>
-            <div class="box">
-                <div class="columns">
-                    <div class="column">
-                        <button type="button" class="button is-primary" id="btnlimpardbc" name="btnlimpardbc">Limpar DBCs</button>
-                        <span id="resultadolimpeza"></span>
-                    </div>
-                </div>
-                <div class="columns">
-                    <div class="column">
-                        <h5 class="title is-5">Arquivos DBC ( {% if filesdbcN > 0 %}{{ filesdbcN }} {% else %} 0 {% endif %} )</h5>
-                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
-                            <div class="grid">
-                                {% for name in filesdbc: %}
-                                <div class="cell">
-                                    <a href="{{url_for('download')}}?arquivo=dbc/{{ name }}">{{ name }}</a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <h5 class="title is-5">Arquivos CSV</h5>
-                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
-                            <div class="grid">
-                                {% for name in filescsv: %}
-                                <div class="cell">
-                                    <a href="{{url_for('download')}}?arquivo=csv/{{ name }}">{{ name }}</a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="column">
-                        <h5 class="title is-5">Arquivos PARQUET</h5>
-                        <div class="fixed-grid has-auto-count" style="overflow-y:auto; max-height: 100px; max-width: 200px;">
-                            <div class="grid">
-                                {% for name in filesparquet: %}
-                                <div class="cell">
-                                    <a href="{{url_for('download')}}?arquivo=parquet/{{ name }}">{{ name }}</a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
             <hr />
             <div id="messageftp" class="message is-info">{{ messageftp }}</div>
             <div class="box">
@@ -246,7 +196,7 @@
                             <div class="field">
                                 <div class="columns">
                                     <div class="column is-four-fifths">
-                                        <label for="caminho_ftp">Caminho do FTP: (Após a pasta <strong>/dissemin/publicos/</strong>. Exemplo: SIHSUS/200801_/Dados/ER)</label>
+                                        <label for="caminho_ftp">Caminho do FTP: (Após a pasta <strong>/dissemin/publicos/</strong>. Exemplo: SIHSUS/200801_/Dados/ERBA23)</label>
                                         <div class="control">
                                             <input class="input" name="caminho_ftp" id="caminho_ftp" type="text" placeholder="Caminho do FTP" />
                                         </div>
@@ -394,20 +344,6 @@
             var numsStr = string.replace(/[^0-9]/g,'');
             return parseInt(numsStr);
         }
-        // function limparDBCs(){
-        //     // Desabilitar o botão
-        //     $('#btnlimpardbc').attr('disabled', true);
-        //     alert('apertou o Limpar DBCs');
-
-        //     // jQuery.ajax({
-        //     //     // url: "ftp.php",
-        //     //     url: "/limpardbc",
-        //     //     method: "POST",
-        //     //     data: {
-        //     //         caminho_ftp: $('#caminho_ftp').val()
-        //     //     }
-        //     // });
-        // }
         
     </script>
 </body>
